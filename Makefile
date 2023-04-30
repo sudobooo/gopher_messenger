@@ -1,10 +1,11 @@
-build-user-service:
-		go build -v ./user_service/cmd/user
+user-service:
+		go build -v -o user-service ./user_service/cmd/user_service
 lint:
 		golangci-lint run --fix --fast
 fmt:
 		gofmt -s -w .
+check: fmt lint
 
 
-.DEFAULT_GOAL := build-user-service
-.PHONY: build-user-service lint fmt
+.DEFAULT_GOAL := user-service
+.PHONY: build-user-service
