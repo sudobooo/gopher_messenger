@@ -8,4 +8,3 @@ check: fmt lint
 
 
 .DEFAULT_GOAL := user-service
-.PHONY: build-user-service
