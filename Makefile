@@ -4,7 +4,9 @@ lint:
 		golangci-lint run --fix --fast
 fmt:
 		gofmt -s -w .
-check: fmt lint
+test:
+		go test -v -race -timeout 30s ./...
+check: fmt lint test
 
 
 .DEFAULT_GOAL := user-service
