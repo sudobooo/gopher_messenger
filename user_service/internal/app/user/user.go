@@ -1,8 +1,11 @@
 package user
 
 import (
+	"database/sql"
 	"io"
 	"net/http"
+
+	"github.com/sudobooo/gopher_messenger/user_service/internal/database"
 
 	"github.com/sudobooo/gopher_messenger/user_service/internal/config"
 
@@ -11,16 +14,18 @@ import (
 )
 
 type Service struct {
-	config *config.Config
-	logger *logrus.Logger
-	router *chi.Mux
+	config   *config.Config
+	logger   *logrus.Logger
+	router   *chi.Mux
+	database *database.Database
 }
 
 func New(cfg *config.Config) *Service {
 	return &Service{
-		config: cfg,
-		logger: logrus.New(),
-		router: chi.NewRouter(),
+		config:   cfg,
+		logger:   logrus.New(),
+		router:   chi.NewRouter(),
+		database: database.New(),
 	}
 }
 
@@ -30,6 +35,11 @@ func (s *Service) Start() error {
 	}
 
 	s.configureRouter()
+
+	if err := s.configureDatabase(); err != nil {
+		return err
+	}
+	defer db.Close()
 
 	s.logger.Info("starting user service")
 
@@ -49,6 +59,21 @@ func (s *Service) configureLogger() error {
 
 func (s *Service) configureRouter() {
 	s.router.HandleFunc("/hello", s.handleHello())
+}
+
+func (s *Service) configureDatabase() error {
+	db, err := sql.Open("postgres", s.config.DatabaseURL)
+	if err != nil {
+		return err
+	}
+
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
+	s.database = db
+
+	return nil
 }
 
 func (s *Service) handleHello() http.HandlerFunc {
