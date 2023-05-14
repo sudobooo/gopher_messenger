@@ -1,22 +1,24 @@
-package service
+package user
 
 import (
 	"io"
 	"net/http"
+
+	"github.com/sudobooo/gopher_messenger/user_service/internal/config"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 )
 
 type Service struct {
-	config *Config
+	config *config.Config
 	logger *logrus.Logger
 	router *chi.Mux
 }
 
-func New(config *Config) *Service {
+func New(cfg *config.Config) *Service {
 	return &Service{
-		config: config,
+		config: cfg,
 		logger: logrus.New(),
 		router: chi.NewRouter(),
 	}

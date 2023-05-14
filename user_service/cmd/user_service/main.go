@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/BurntSushi/toml"
-
-	"github.com/sudobooo/gopher_messenger/user_service/internal/service"
+	"github.com/sudobooo/gopher_messenger/user_service/internal/app/user"
+	"github.com/sudobooo/gopher_messenger/user_service/internal/config"
 )
 
 var (
@@ -20,14 +20,14 @@ func init() {
 func main() {
 	flag.Parse()
 
-	config := service.NewConfig()
+	currentConfig := config.NewConfig()
 
-	_, err := toml.DecodeFile(configPath, config)
+	_, err := toml.DecodeFile(configPath, currentConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	s := service.New(config)
+	s := user.New(currentConfig)
 	if err := s.Start(); err != nil {
 		log.Fatal(err)
 	}
